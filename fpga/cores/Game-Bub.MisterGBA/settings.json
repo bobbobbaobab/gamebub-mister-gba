@@ -38,6 +38,21 @@
       "address": "0x0014",
       "type": "action",
       "value": "0x2"
+    },
+    {
+      "id": 4,
+      "label": "Color Corrections",
+      "address": "0x0020",
+      "default": "0x1",
+      "type": "list",
+      "items": [
+        { "label": "None", "value": "0x0" },
+        { "label": "GBA", "value": "0x1" },
+        { "label": "GBA SP", "value": "0x2" },
+        { "label": "NDS", "value": "0x3" },
+        { "label": "NDS Lite", "value": "0x4" },
+        { "label": "NSO GBA", "value": "0x5" }
+      ]
     }
   ]
 }

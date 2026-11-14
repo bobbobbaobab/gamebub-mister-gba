@@ -10,6 +10,8 @@ An unofficial port of [GBA_MiSTer](https://github.com/MiSTer-devel/GBA_MiSTer) f
 
 The core includes the Normmatt BIOS. To use your own 16 KiB BIOS dump, place it in the core folder as `gba_bios.bin`.
 
+In **Core Settings → Color Corrections**, choose **None**, **GBA** (default), **GBA SP**, **NDS**, **NDS Lite**, or **NSO GBA**. The setting applies to both the handheld display and HDMI output.
+
 ## Save states
 
 In **Core Settings**, select **State Slot** (1–4), then choose **Save State** or **Load State**. While playing, press **Y** to save to the selected slot or **X** to load from it. Exit the game normally to keep changes. The firmware writes the four slots to a `.mgstate` file next to the ROM. Cartridge saves use a separate `.mgsav` file.
