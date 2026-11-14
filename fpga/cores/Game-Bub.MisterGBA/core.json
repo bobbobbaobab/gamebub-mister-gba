@@ -1,0 +1,18 @@
+{
+  "metadata": {
+    "id": "Game-Bub.MisterGBA",
+    "name": "Game Boy Advance (MiSTer)",
+    "author": "MiSTer / Game Bub",
+    "version": "0.1.0",
+    "license": "GPL-2.0"
+  },
+  "hardware": {
+    "button_remap": true
+  },
+  "bitstreams": [
+    {
+      "target": "gamebub_rev4",
+      "filename": "gba-mister-gamebub_rev4.bit"
+    }
+  ]
+}

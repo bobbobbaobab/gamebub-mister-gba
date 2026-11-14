@@ -1,0 +1,15 @@
+/dist/
+/fpga/build/
+/fpga/.bsp/
+*.bit
+*.bit.hs
+*.gba
+*.gb
+*.gbc
+*.sav
+*.mgsav
+*.mgstate
+gba_bios.bin
+*.vcd
+*.ghw
+__pycache__/

@@ -1,0 +1,48 @@
+package net.gamebub.core.gba
+
+import chisel3._
+
+private[gba] class MisterGba(cycleDivider: Int) extends ExtModule(Map("SPEEDDIV" -> IntParam(cycleDivider))) {
+  override def desiredName: String = "gba_gamebub"
+
+  val io = FlatIO(new Bundle {
+    val clk = Input(Clock())
+    val run = Input(Bool())
+    val pause = Input(Bool())
+    val flash_1m = Input(Bool())
+    val rom_words = Input(UInt(25.W))
+    val keys = Input(UInt(10.W))
+    val bios_address = Input(UInt(12.W))
+    val bios_data = Input(UInt(32.W))
+    val bios_write = Input(Bool())
+    val rom_request = Output(Bool())
+    val rom_address = Output(UInt(25.W))
+    val rom_first = Input(UInt(32.W))
+    val rom_second = Input(UInt(32.W))
+    val rom_done = Input(Bool())
+    val work_request = Output(Bool())
+    val work_read = Output(Bool())
+    val work_address = Output(UInt(26.W))
+    val work_write_data = Output(UInt(32.W))
+    val work_read_data = Input(UInt(32.W))
+    val work_done = Input(Bool())
+    val state_save = Input(Bool())
+    val state_load = Input(Bool())
+    val state_slot = Input(UInt(2.W))
+    val state_busy = Output(Bool())
+    val state_loaded = Output(Bool())
+    val state_request = Output(Bool())
+    val state_read = Output(Bool())
+    val state_address = Output(UInt(26.W))
+    val state_write_data = Output(UInt(64.W))
+    val state_read_data = Input(UInt(64.W))
+    val state_done = Input(Bool())
+    val pixel_write = Output(Bool())
+    val pixel_x = Output(UInt(8.W))
+    val pixel_y = Output(UInt(8.W))
+    val pixel_data = Output(UInt(18.W))
+    val audio_left = Output(SInt(16.W))
+    val audio_right = Output(SInt(16.W))
+    val rumble = Output(Bool())
+  })
+}

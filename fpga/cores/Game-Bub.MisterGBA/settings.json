@@ -1,0 +1,43 @@
+{
+  "settings": [
+    {
+      "id": 1,
+      "label": "State Slot",
+      "address": "0x0018",
+      "default": "0x0",
+      "type": "list",
+      "items": [
+        {
+          "label": "1",
+          "value": "0x0"
+        },
+        {
+          "label": "2",
+          "value": "0x1"
+        },
+        {
+          "label": "3",
+          "value": "0x2"
+        },
+        {
+          "label": "4",
+          "value": "0x3"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "label": "Save State",
+      "address": "0x0014",
+      "type": "action",
+      "value": "0x1"
+    },
+    {
+      "id": 3,
+      "label": "Load State",
+      "address": "0x0014",
+      "type": "action",
+      "value": "0x2"
+    }
+  ]
+}

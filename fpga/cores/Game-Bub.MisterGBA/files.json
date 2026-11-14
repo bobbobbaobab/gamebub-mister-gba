@@ -1,0 +1,52 @@
+{
+  "files": [
+    {
+      "id": 0,
+      "label": "Cartridge",
+      "extensions": [
+        "gba"
+      ],
+      "user_selected": true,
+      "optional": false,
+      "read_only": true,
+      "address": "0x30000000",
+      "max_size": "0x1d00000"
+    },
+    {
+      "id": 1,
+      "label": "Cartridge Save",
+      "extensions": [
+        "mgsav"
+      ],
+      "dependent_on_0": true,
+      "optional": true,
+      "initialize": true,
+      "address": "0x31d00000",
+      "max_size": "0x20000",
+      "exact_size": "0x20000"
+    },
+    {
+      "id": 2,
+      "label": "BIOS",
+      "filename": "gba_bios.bin",
+      "optional": true,
+      "read_only": true,
+      "address": "0x10000000",
+      "max_size": "0x4000",
+      "exact_size": "0x4000"
+    },
+    {
+      "id": 3,
+      "label": "Save States",
+      "extensions": [
+        "mgstate"
+      ],
+      "dependent_on_0": true,
+      "optional": true,
+      "initialize": true,
+      "address": "0x31e00000",
+      "max_size": "0x200000",
+      "exact_size": "0x200000"
+    }
+  ]
+}
