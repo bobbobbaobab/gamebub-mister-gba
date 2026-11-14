@@ -269,7 +269,6 @@ class HandheldMisterGba extends Module with Core {
 
   val slot = RegInit(0.U(2.W))
   val activeSlot = RegInit(0.U(2.W))
-  val request = WireDefault(0.U(2.W))
   private val snapshot = RegInit(Snapshot.idle)
   val save = Reg(Bool())
   val snapshotSuccess = RegInit(false.B)
@@ -280,6 +279,18 @@ class HandheldMisterGba extends Module with Core {
   // pause to take effect and let already-issued memory transactions drain.
   val exportDrain = RegInit(0.U(8.W))
   when (exportDrain =/= 0.U) { exportDrain := exportDrain - 1.U }
+
+  val buttons = io.input.buttons
+  val inputActive = running && focused && !snapshotActive && !exporting
+  val savePressed = buttons.y && !RegNext(buttons.y, false.B)
+  val loadPressed = buttons.x && !RegNext(buttons.x, false.B)
+  // Use the same request as the Home menu. A register write takes priority.
+  val request = WireDefault(0.U(2.W))
+  when (inputActive && loadPressed) {
+    request := 2.U
+  } .elsewhen (inputActive && savePressed) {
+    request := 1.U
+  }
 
   registers <> RegisterMap(16, 32, Seq(
     0x0014 -> RegisterMap.Entry.w(request),
@@ -381,8 +392,6 @@ class HandheldMisterGba extends Module with Core {
     }
   }
 
-  val buttons = io.input.buttons
-  val inputActive = running && focused && !snapshotActive && !exporting
   gba.keys := Mux(inputActive, Cat(buttons.l, buttons.r, buttons.down, buttons.up,
     buttons.left, buttons.right, buttons.start, buttons.select, buttons.b, buttons.a), 0.U)
   io.vibrate.mode := Mux(inputActive && gba.rumble, VibrateV0.Mode.On, VibrateV0.Mode.Off)

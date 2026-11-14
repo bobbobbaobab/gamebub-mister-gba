@@ -12,7 +12,7 @@ The core includes the Normmatt BIOS. To use your own 16 KiB BIOS dump, place it 
 
 ## Save states
 
-In **Core Settings**, select **State Slot** (1–4), then choose **Save State** or **Load State**. Exit the game normally to keep changes. The firmware writes the four slots to a `.mgstate` file next to the ROM. Cartridge saves use a separate `.mgsav` file.
+In **Core Settings**, select **State Slot** (1–4), then choose **Save State** or **Load State**. While playing, press **Y** to save to the selected slot or **X** to load from it. Exit the game normally to keep changes. The firmware writes the four slots to a `.mgstate` file next to the ROM. Cartridge saves use a separate `.mgsav` file.
 
 ## Build and test
 

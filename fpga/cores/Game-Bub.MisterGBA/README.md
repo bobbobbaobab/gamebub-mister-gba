@@ -22,9 +22,10 @@ The core ships with the upstream open-source BIOS. For a BIOS override,
 place your own 16 KiB `gba_bios.bin` in the same folder.
 
 In Core Settings, select **State Slot**, then **Save State** or **Load
-State**. The stock firmware writes the four slots to `<rom>.mgstate` on
-normal exit. Cartridge saves use a 128 KiB `<rom>.mgsav` file. The firmware
-loads both files on launch.
+State**. While playing, press **Y** to save to the selected slot or **X** to
+load from it. The stock firmware writes the four slots to `<rom>.mgstate`
+on normal exit. Cartridge saves use a 128 KiB `<rom>.mgsav` file. The
+firmware loads both files on launch.
 The MiSTer savestate engine excludes cartridge backup bytes from snapshots.
 
 The single-chip SDRAM window reserves 3 MiB above the ROM for work RAM,
