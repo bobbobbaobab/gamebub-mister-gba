@@ -232,12 +232,6 @@ class HandheldTop[T <: Core](coreFactory: () => T, revision: Revision) extends M
   }
 
   // Video filter
-  val lcdGridEnabled = core.getInterface("lcdGrid") match {
-    case Some(enabled: Bool) => enabled
-    case Some(other) => throw new CoreException("Unknown 'lcdGrid': " + other.getClass())
-    case None => false.B
-  }
-
   val videoFilterIn = Wire(ColorRGB(videoColorDepthR, videoColorDepthG, videoColorDepthB))
   val videoFilterOut = Wire(ColorRGB(8))
   val videoFilterReset = Wire(Reset())
@@ -653,8 +647,6 @@ class HandheldTop[T <: Core](coreFactory: () => T, revision: Revision) extends M
       color
     }
 
-    val lcdGridEdge = WireDefault(false.B)
-    val lcdGrid = XpmCdcSingle(clock, lcdGridEnabled) && lcdGridEdge
     val framebufferInBounds = Wire(Bool())
     val overlayInBounds = Wire(Bool())
     val videoOutput = ColorRGB(8, 8, 8).make(r = 0, g = 0, b = 0)
@@ -665,10 +657,6 @@ class HandheldTop[T <: Core](coreFactory: () => T, revision: Revision) extends M
         videoOutput.r := color.r >> 1
         videoOutput.g := color.g >> 1
         videoOutput.b := color.b >> 1
-      } .elsewhen (lcdGrid) {
-        videoOutput.r := color.r - (color.r >> 2)
-        videoOutput.g := color.g - (color.g >> 2)
-        videoOutput.b := color.b - (color.b >> 2)
       } .otherwise {
         videoOutput := color
       }
@@ -789,13 +777,6 @@ class HandheldTop[T <: Core](coreFactory: () => T, revision: Revision) extends M
         dpiX < (videoOffsetX + (videoWidth * videoScale)).U &&
         dpiY >= videoOffsetY.U &&
         dpiY < (videoOffsetY + (videoHeight * videoScale)).U
-
-      // Use display coordinates, since the framebuffer read address leads the output.
-      if (videoScale > 1) {
-        val phaseX = (dpiX - videoOffsetX.U) % videoScale.U
-        val phaseY = (dpiY - videoOffsetY.U) % videoScale.U
-        lcdGridEdge := phaseX === (videoScale - 1).U || phaseY === (videoScale - 1).U
-      }
 
       // Scale overlay
       val overlayScale = (screenWidth / overlayWidth).min(screenHeight / overlayHeight)

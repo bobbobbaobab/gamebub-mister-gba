@@ -55,17 +55,6 @@
       ]
     },
     {
-      "id": 5,
-      "label": "LCD Pixel Grid",
-      "address": "0x0024",
-      "default": "0x0",
-      "type": "list",
-      "items": [
-        { "label": "Off", "value": "0x0" },
-        { "label": "On", "value": "0x1" }
-      ]
-    },
-    {
       "id": 6,
       "label": "Enable Game Boy Player",
       "address": "0x0028",
