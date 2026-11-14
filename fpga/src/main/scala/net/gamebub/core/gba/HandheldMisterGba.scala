@@ -46,6 +46,7 @@ class HandheldMisterGba extends Module with Core {
     val clocks = new ClocksV0(ClockHz, VcoHz / displayDivider, VcoHz / 5)
     val video = new VideoV0(240, 160, 5, 5, 5, FramePeriod)
     val videoFilter = new VideoFilterBasicV0(5, 5, 5, latency = 3)
+    val lcdGrid = Output(Bool())
     val audio = new AudioV0()
     val host = new HostV0()
     val input = new InputV0()
@@ -270,6 +271,8 @@ class HandheldMisterGba extends Module with Core {
 
   val slot = RegInit(0.U(2.W))
   val colorProfile = RegInit(1.U(3.W))
+  val lcdGridEnabled = RegInit(false.B)
+  io.lcdGrid := lcdGridEnabled
   val activeSlot = RegInit(0.U(2.W))
   private val snapshot = RegInit(Snapshot.idle)
   val save = Reg(Bool())
@@ -299,6 +302,7 @@ class HandheldMisterGba extends Module with Core {
     0x0018 -> RegisterMap.Entry.rw(slot),
     0x001c -> RegisterMap.Entry.r(snapshotResult),
     0x0020 -> RegisterMap.Entry.rw(colorProfile),
+    0x0024 -> RegisterMap.Entry.rw(lcdGridEnabled),
   ))
 
   gba.run := (running || snapshotActive) && romWords =/= 0.U

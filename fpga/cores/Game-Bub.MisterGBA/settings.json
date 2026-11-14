@@ -53,6 +53,17 @@
         { "label": "NDS Lite", "value": "0x4" },
         { "label": "NSO GBA", "value": "0x5" }
       ]
+    },
+    {
+      "id": 5,
+      "label": "LCD Pixel Grid",
+      "address": "0x0024",
+      "default": "0x0",
+      "type": "list",
+      "items": [
+        { "label": "Off", "value": "0x0" },
+        { "label": "On", "value": "0x1" }
+      ]
     }
   ]
 }
