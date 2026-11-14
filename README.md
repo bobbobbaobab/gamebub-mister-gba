@@ -4,7 +4,7 @@ An unofficial port of [GBA_MiSTer](https://github.com/MiSTer-devel/GBA_MiSTer) f
 
 ## Install
 
-1. Download `gamebub-mister-gba-v0.1.0-rev4.zip` from the [latest release](https://github.com/bobbobbaobab/gamebub-mister-gba/releases/latest).
+1. Download the Rev4 ZIP from the [latest release](https://github.com/bobbobbaobab/gamebub-mister-gba/releases/latest).
 2. Extract it to the SD card root. The bitstream and three JSON files go in `/cores/Game-Bub.MisterGBA/`.
 3. Select **Game Boy Advance (MiSTer)** from the handheld's core list and open a `.gba` ROM.
 
