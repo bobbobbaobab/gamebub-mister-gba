@@ -73,6 +73,7 @@ begin
       state_busy => state_busy, state_loaded => state_loaded,
       state_request => state_request, state_read => state_read, state_address => state_address,
       state_write_data => state_write_data, state_read_data => state_read_data, state_done => state_done,
+      gbp_so => open,
       pixel_write => pixel_write, pixel_x => pixel_x, pixel_y => pixel_y, pixel_data => pixel_data,
       audio_left => audio_left, audio_right => audio_right, rumble => open
     );

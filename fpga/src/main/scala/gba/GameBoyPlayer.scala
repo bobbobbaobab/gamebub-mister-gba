@@ -11,7 +11,7 @@ import lib.log.Logger
 ///
 /// Handles detection (based on PPU output), and communication.
 /// The only "special feature" is rumble support.
-class GameBoyPlayer extends Module {
+class GameBoyPlayer(serialClockDivider: Int = 1) extends Module {
   val io = IO(new Bundle {
     val enable = Input(Bool())
 
@@ -36,8 +36,8 @@ class GameBoyPlayer extends Module {
   val regRumble = RegInit(false.B)
   io.rumble := regRumble
 
-  val vblankPulse = io.ppu.vblank && !RegEnable(io.ppu.vblank, io.enable)
-  val hblankPulse = io.ppu.hblank && !RegEnable(io.ppu.hblank, io.enable)
+  val vblankPulse = io.ppu.vblank && !RegEnable(io.ppu.vblank, false.B, io.enable)
+  val hblankPulse = io.ppu.hblank && !RegEnable(io.ppu.hblank, false.B, io.enable)
   val scanline = RegInit(0.U(8.W))
   when (io.enable) {
     when (vblankPulse) {
@@ -50,12 +50,12 @@ class GameBoyPlayer extends Module {
   // Whether serial is active (post-detection)
   val regSerialEnabled = RegInit(false.B)
   // Serial data in and out
-  val regSerialData = Reg(UInt(32.W))
+  val regSerialData = RegInit(0.U(32.W))
   // Transfer complete and ready for processing
   val regTransferDone = RegInit(false.B)
 
   // Link port
-  val regLinkOut = Reg(Bool())
+  val regLinkOut = RegInit(true.B)
   val regLinkClock = RegInit(true.B)
   io.link.dir := DontCare
   io.link.out.sd := false.B
@@ -72,8 +72,10 @@ class GameBoyPlayer extends Module {
   private def handleSerialTransfers(): Unit = {
     // Do one transfer every ~15 milliseconds
     val regMainCounter = RegInit(0.U(18.W))
-    val regClockTimer = Reg(UInt(6.W))
-    when (io.enable && regSerialEnabled) {
+    val regClockTimer = RegInit(0.U(6.W))
+    val active = io.enable && regSerialEnabled
+    val serialTick = if (serialClockDivider == 1) active else Counter(active, serialClockDivider)._2
+    when (serialTick) {
       val nextCounter = regMainCounter +& 1.U
       regMainCounter := nextCounter
 

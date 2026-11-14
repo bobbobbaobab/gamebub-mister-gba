@@ -111,6 +111,10 @@ entity gba_top is
       AnalogTiltX           : in     signed(7 downto 0);
       AnalogTiltY           : in     signed(7 downto 0);
       Rumble                : out    std_logic;
+      gbp_enable            : in     std_logic;
+      gbp_sc                : in     std_logic;
+      gbp_si                : in     std_logic;
+      gbp_so                : out    std_logic;
       -- debug interface          
       GBA_BusAddr           : in     std_logic_vector(27 downto 0);
       GBA_BusRnW            : in     std_logic;
@@ -393,6 +397,10 @@ begin
       
       new_cycles        => new_cycles,      
       new_cycles_valid  => new_cycles_valid,
+      gbp_enable        => gbp_enable,
+      gbp_sc            => gbp_sc,
+      gbp_si            => gbp_si,
+      gbp_so            => gbp_so,
                          
       IRP_Serial        => IRP_Serial
    );

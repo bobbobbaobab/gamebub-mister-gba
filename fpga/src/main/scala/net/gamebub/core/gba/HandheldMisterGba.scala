@@ -2,6 +2,7 @@ package net.gamebub.core.gba
 
 import chisel3._
 import chisel3.util._
+import _root_.gba.GameBoyPlayer
 import lib.audio.AudioFilterChain
 import lib.mem._
 import lib.mem.sdram.BurstSdramController
@@ -272,6 +273,7 @@ class HandheldMisterGba extends Module with Core {
   val slot = RegInit(0.U(2.W))
   val colorProfile = RegInit(1.U(3.W))
   val lcdGridEnabled = RegInit(false.B)
+  val gameBoyPlayerEnabled = RegInit(true.B)
   io.lcdGrid := lcdGridEnabled
   val activeSlot = RegInit(0.U(2.W))
   private val snapshot = RegInit(Snapshot.idle)
@@ -303,6 +305,7 @@ class HandheldMisterGba extends Module with Core {
     0x001c -> RegisterMap.Entry.r(snapshotResult),
     0x0020 -> RegisterMap.Entry.rw(colorProfile),
     0x0024 -> RegisterMap.Entry.rw(lcdGridEnabled),
+    0x0028 -> RegisterMap.Entry.rw(gameBoyPlayerEnabled),
   ))
 
   gba.run := (running || snapshotActive) && romWords =/= 0.U
@@ -399,10 +402,6 @@ class HandheldMisterGba extends Module with Core {
     }
   }
 
-  gba.keys := Mux(inputActive, Cat(buttons.l, buttons.r, buttons.down, buttons.up,
-    buttons.left, buttons.right, buttons.start, buttons.select, buttons.b, buttons.a), 0.U)
-  io.vibrate.mode := Mux(inputActive && gba.rumble, VibrateV0.Mode.On, VibrateV0.Mode.Off)
-
   // Game Bub's framebuffer consumes a raster stream. The upstream core
   // emits pixels in bursts, with the position of each emitted pixel.
   val frameStart = gba.pixel_x === 0.U && gba.pixel_y === 0.U
@@ -423,6 +422,29 @@ class HandheldMisterGba extends Module with Core {
   io.video.data.g := gba.pixel_data(11, 7)
   io.video.data.b := gba.pixel_data(5, 1)
   GbaColorCorrection.setup(clock, colorProfile, io.videoFilter)
+
+  val playerEnabled = gameBoyPlayerEnabled && gba.run
+  val player = withReset(reset.asBool || !playerEnabled) {
+    Module(new GameBoyPlayer(serialClockDivider = GbaCycleDivider))
+  }
+  // The detector consumes a complete raw raster, before any color correction.
+  player.io.enable := playerEnabled && inputActive
+  player.io.ppu.pixel := Cat(io.video.data.b, io.video.data.g, io.video.data.r)
+  player.io.ppu.valid := pixel
+  player.io.ppu.hblank := RegNext(endOfLine, false.B)
+  player.io.ppu.vblank := RegNext(io.video.vblank, false.B)
+  player.io.link.in := DontCare
+  player.io.link.in.so := gba.gbp_so
+  gba.gbp_enable := playerEnabled && (player.io.doKeypadOverride || player.io.doLinkOverride)
+  gba.gbp_sc := !player.io.doLinkOverride || player.io.link.out.sc
+  gba.gbp_si := !player.io.doLinkOverride || player.io.link.out.si
+
+  val keys = Cat(buttons.l, buttons.r, buttons.down, buttons.up,
+    buttons.left, buttons.right, buttons.start, buttons.select, buttons.b, buttons.a)
+  gba.keys := Mux(inputActive, Mux(playerEnabled && player.io.doKeypadOverride,
+    player.io.keypadOverride, keys), 0.U)
+  io.vibrate.mode := Mux(inputActive && (gba.rumble || (playerEnabled && player.io.rumble)),
+    VibrateV0.Mode.On, VibrateV0.Mode.Off)
 
   // Sample the mixer on the related divide-by-three MMCM clock.
   // Vivado times the crossing from these source registers directly.

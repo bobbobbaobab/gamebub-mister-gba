@@ -64,6 +64,14 @@
         { "label": "Off", "value": "0x0" },
         { "label": "On", "value": "0x1" }
       ]
+    },
+    {
+      "id": 6,
+      "label": "Enable Game Boy Player",
+      "address": "0x0028",
+      "default": "0x1",
+      "type": "checkbox",
+      "value": "0x1"
     }
   ]
 }

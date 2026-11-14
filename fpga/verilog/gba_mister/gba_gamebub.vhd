@@ -9,6 +9,9 @@ entity gba_gamebub is
     flash_1m : in std_logic;
     rom_words : in std_logic_vector(24 downto 0);
     keys : in std_logic_vector(9 downto 0);
+    gbp_enable : in std_logic := '0';
+    gbp_sc, gbp_si : in std_logic := '1';
+    gbp_so : out std_logic;
     bios_address : in std_logic_vector(11 downto 0);
     bios_data : in std_logic_vector(31 downto 0);
     bios_write : in std_logic;
@@ -137,6 +140,10 @@ begin
       KeyDown => keys(7),
       KeyR => keys(8),
       KeyL => keys(9),
+      gbp_enable => gbp_enable,
+      gbp_sc => gbp_sc,
+      gbp_si => gbp_si,
+      gbp_so => gbp_so,
       AnalogTiltX => (others => '0'),
       AnalogTiltY => (others => '0'),
       Rumble => rumble,

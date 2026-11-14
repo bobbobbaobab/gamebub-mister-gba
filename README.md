@@ -12,6 +12,8 @@ The core includes the Normmatt BIOS. To use your own 16 KiB BIOS dump, place it 
 
 In **Core Settings → Color Corrections**, choose **None**, **GBA** (default), **GBA SP**, **NDS**, **NDS Lite**, or **NSO GBA**. The setting applies to both the handheld display and HDMI output. Enable **LCD Pixel Grid** to show the boundaries of the original GBA pixels on the handheld display. The grid is off by default.
 
+**Enable Game Boy Player** in **Core Settings** is on by default. It lets compatible games use the Game Bub's rumble motor through the Game Boy Player protocol.
+
 ## Save states
 
 In **Core Settings**, select **State Slot** (1–4), then choose **Save State** or **Load State**. While playing, press **Y** to save to the selected slot or **X** to load from it. Exit the game normally to keep changes. The firmware writes the four slots to a `.mgstate` file next to the ROM. Cartridge saves use a separate `.mgsav` file.
