@@ -307,8 +307,10 @@ class HandheldMisterGba extends Module with Core {
   gba.run := (running || snapshotActive) && romWords =/= 0.U
   gba.pause := !snapshotActive && (!focused || exporting)
   gba.state_slot := activeSlot
-  gba.state_save := snapshot === Snapshot.launch && save
-  gba.state_load := snapshot === Snapshot.launch && !save
+  // Wait for the engine to finish any startup reset before watching for busy.
+  val launchSnapshot = snapshot === Snapshot.launch && !gba.state_busy
+  gba.state_save := launchSnapshot && save
+  gba.state_load := launchSnapshot && !save
 
   when (stateHeaderWritten || gba.state_loaded) { snapshotSuccess := true.B }
   switch (snapshot) {
@@ -321,7 +323,9 @@ class HandheldMisterGba extends Module with Core {
         snapshot := Snapshot.launch
       }
     }
-    is (Snapshot.launch) { snapshot := Snapshot.waitBusy }
+    is (Snapshot.launch) {
+      when (launchSnapshot) { snapshot := Snapshot.waitBusy }
+    }
     is (Snapshot.waitBusy) {
       when (gba.state_busy) { snapshot := Snapshot.waitDone }
     }

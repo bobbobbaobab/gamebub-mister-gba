@@ -12,5 +12,7 @@ ghdl -m --std=08 gba_sound_dma_tb
 ghdl -r --std=08 gba_sound_dma_tb --ieee-asserts=disable
 ghdl -m --std=08 gba_serial_tb
 ghdl -r --std=08 gba_serial_tb --ieee-asserts=disable
+ghdl -m --std=08 gba_savestates_tb
+ghdl -r --std=08 gba_savestates_tb --ieee-asserts=disable
 ghdl -m --std=08 gba_gamebub_tb
 ghdl -r --std=08 gba_gamebub_tb --ieee-asserts=disable "$@"

@@ -217,16 +217,22 @@ begin
          
          registerram_readvalid <= registerram_readen;
 
+         -- Mirror I/O writes independently of the one-cycle save/load requests.
+         -- Keep tracking writes while the CPU and memory bus settle.
+         if (gb_on = '1' and gb_bus.ena = '1' and gb_bus.rnw = '0' and
+             (state = IDLE or state = SAVE_WAITJUMP or state = SAVE_WAITSETTLE or
+              state = LOAD_WAITSETTLE or state = LOAD_HEADERAMOUNTCHECK)) then
+            registerram_DataIn <= gb_bus.Din;
+            registerram_addr_w <= to_integer(unsigned(gb_bus.adr(9 downto 2)));
+            registerram_we     <= gb_bus.bEna;
+         end if;
+
          case state is
          
             when IDLE =>
                savetype_counter <= 0;
                if (gb_on = '0' and gb_on_1 = '1') then
                   state                <= RESET_CLEAR;
-               elsif (gb_bus.ena = '1' and gb_bus.rnw = '0') then
-                  registerram_DataIn   <= gb_bus.Din;
-                  registerram_addr_w   <= to_integer(unsigned(gb_bus.adr(9 downto 2)));
-                  registerram_we       <= gb_bus.bEna;
                elsif (save = '1') then
                   state                <= SAVE_WAITJUMP;
                   jump_wait            <= 0;
