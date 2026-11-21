@@ -210,6 +210,7 @@ class HandheldTop[T <: Core](coreFactory: () => T, revision: Revision) extends M
     videoColorDepthR: Int,
     videoColorDepthG: Int,
     videoColorDepthB: Int,
+    hdmiPillarbox3To2: Boolean,
   ) = core.getInterface("video") match {
     case Some(video: VideoV0) => {
       coreVideo.dataR := video.data.r
@@ -225,6 +226,7 @@ class HandheldTop[T <: Core](coreFactory: () => T, revision: Revision) extends M
         video.colorDepthR,
         video.colorDepthG,
         video.colorDepthB,
+        video.hdmiPillarbox3To2,
       )
     }
     case Some(x) => throw new CoreException("Unknown 'video': " + x.getClass())
@@ -713,8 +715,9 @@ class HandheldTop[T <: Core](coreFactory: () => T, revision: Revision) extends M
         }
       }
       val hdmiFramePulse = io.hdmiCy === (hdmiFrameHeight - 1).U
+      val hdmiFrameBoundary = hdmiFramePulse && !RegNext(hdmiFramePulse)
       framebufferIndex := regHdmiFrame
-      when (hdmiFramePulse && !RegNext(hdmiFramePulse)) {
+      when (hdmiFrameBoundary) {
         regHdmiFrame := lastFrameComplete
       }
 
@@ -723,11 +726,36 @@ class HandheldTop[T <: Core](coreFactory: () => T, revision: Revision) extends M
       val videoOffsetX = (screenWidth - (videoWidth * videoScale)) / 2
       val videoOffsetY = (screenHeight - (videoHeight * videoScale)) / 2
       val framebufferReadDelay = 3 /* reading */ + videoFilterLatency
+      val defaultReadX = videoX - videoOffsetX.U + framebufferReadDelay.U
+      val pillarboxWidth = 608 // 720 * (3/2) / (16/9), rounded to an even width.
+      val pillarboxLeft = (screenWidth - pillarboxWidth) / 2
+      val defaultInBounds = videoX >= videoOffsetX.U &&
+        videoX < (videoOffsetX + (videoWidth * videoScale)).U
+      val (framebufferReadX, framebufferXInBounds) = if (hdmiPillarbox3To2) {
+        // Map the center of each output pixel to the original 720-column raster.
+        // The ratio 720/608 reduces to 1 + 7/38. Start early for the read pipeline.
+        val sourceX = RegInit(0.U(10.W))
+        val phase = RegInit(22.U(6.W))
+        val readStart = pillarboxLeft - framebufferReadDelay
+        when (io.hdmiCx === (readStart - 1).U) {
+          sourceX := 0.U
+          phase := 22.U
+        } .elsewhen (io.hdmiCx >= readStart.U && io.hdmiCx < (readStart + pillarboxWidth - 1).U) {
+          val carry = phase >= (38 - 7).U
+          sourceX := sourceX + Mux(carry, 2.U, 1.U)
+          phase := Mux(carry, phase - (38 - 7).U, phase + 7.U)
+        }
+        val visibleX = ShiftRegister(sourceX, framebufferReadDelay)
+        val pillarboxInBounds = videoX >= pillarboxLeft.U && videoX < (pillarboxLeft + pillarboxWidth).U &&
+          visibleX >= videoOffsetX.U && visibleX < (videoOffsetX + videoWidth * videoScale).U
+        (sourceX - videoOffsetX.U, pillarboxInBounds)
+      } else {
+        (defaultReadX, defaultInBounds)
+      }
+
       framebufferReadAddress :=
-        (((videoY - videoOffsetY.U) / videoScale.U) * videoWidth.U) +
-          ((videoX - videoOffsetX.U + framebufferReadDelay.U) / videoScale.U)
-      framebufferInBounds := videoX >= videoOffsetX.U &&
-        videoX < (videoOffsetX + (videoWidth * videoScale)).U &&
+        (((videoY - videoOffsetY.U) / videoScale.U) * videoWidth.U) + (framebufferReadX / videoScale.U)
+      framebufferInBounds := framebufferXInBounds &&
         videoY >= videoOffsetY.U &&
         videoY < (videoOffsetY + (videoHeight * videoScale)).U
 

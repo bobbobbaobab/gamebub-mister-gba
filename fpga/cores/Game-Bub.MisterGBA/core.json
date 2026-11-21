@@ -3,7 +3,7 @@
     "id": "Game-Bub.MisterGBA",
     "name": "Game Boy Advance (MiSTer)",
     "author": "MiSTer / Game Bub",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "license": "GPL-2.0"
   },
   "hardware": {

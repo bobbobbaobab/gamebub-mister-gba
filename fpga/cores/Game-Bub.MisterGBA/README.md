@@ -21,8 +21,11 @@ Copy `core.json`, `files.json`, `settings.json` and the resulting
 The core ships with the upstream open-source BIOS. For a BIOS override,
 place your own 16 KiB `gba_bios.bin` in the same folder.
 
+The handheld displays the game at 3:2. Docked HDMI output automatically
+narrows the game picture and adds side bars for a 3:2 image on a TV set to 16:9.
+
 In Core Settings, select **State Slot**, then **Save State** or **Load
-State**. While playing, press **Y** to save to the selected slot or **X** to
+State**. While playing, press **X** to save to the selected slot or **Y** to
 load from it. The stock firmware writes the four slots to `<rom>.mgstate`
 on normal exit. Cartridge saves use a 128 KiB `<rom>.mgsav` file. The
 firmware loads both files on launch.

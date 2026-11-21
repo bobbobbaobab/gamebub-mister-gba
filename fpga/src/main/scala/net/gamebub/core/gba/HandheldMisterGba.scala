@@ -45,7 +45,7 @@ class HandheldMisterGba extends Module with Core {
   private val displayDivider = (VcoHz / ClocksV0.getClockDisplayHz(FramePeriod)._1).toInt
   val io = IO(new Bundle {
     val clocks = new ClocksV0(ClockHz, VcoHz / displayDivider, VcoHz / 5)
-    val video = new VideoV0(240, 160, 5, 5, 5, FramePeriod)
+    val video = new VideoV0(240, 160, 5, 5, 5, FramePeriod, hdmiPillarbox3To2 = true)
     val videoFilter = new VideoFilterBasicV0(5, 5, 5, latency = 3)
     val audio = new AudioV0()
     val host = new HostV0()
@@ -286,8 +286,8 @@ class HandheldMisterGba extends Module with Core {
 
   val buttons = io.input.buttons
   val inputActive = running && focused && !snapshotActive && !exporting
-  val savePressed = buttons.y && !RegNext(buttons.y, false.B)
-  val loadPressed = buttons.x && !RegNext(buttons.x, false.B)
+  val savePressed = buttons.x && !RegNext(buttons.x, false.B)
+  val loadPressed = buttons.y && !RegNext(buttons.y, false.B)
   // Use the same request as the Home menu. A register write takes priority.
   val request = WireDefault(0.U(2.W))
   when (inputActive && loadPressed) {

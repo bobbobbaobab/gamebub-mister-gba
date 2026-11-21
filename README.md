@@ -14,9 +14,11 @@ In **Core Settings → Color Corrections**, choose **None**, **GBA** (default), 
 
 **Enable Game Boy Player** in **Core Settings** is on by default. It lets compatible games use the Game Bub's rumble motor through the Game Boy Player protocol.
 
+The handheld displays the game at 3:2. Docked HDMI output automatically narrows the game picture and adds side bars for a 3:2 image when the TV displays the input in 16:9.
+
 ## Save states
 
-In **Core Settings**, select **State Slot** (1–4), then choose **Save State** or **Load State**. While playing, press **Y** to save to the selected slot or **X** to load from it. Exit the game normally to keep changes. The firmware writes the four slots to a `.mgstate` file next to the ROM. Cartridge saves use a separate `.mgsav` file.
+In **Core Settings**, select **State Slot** (1–4), then choose **Save State** or **Load State**. While playing, press **X** to save to the selected slot or **Y** to load from it. Exit the game normally to keep changes. The firmware writes the four slots to a `.mgstate` file next to the ROM. Cartridge saves use a separate `.mgsav` file.
 
 ## Build and test
 

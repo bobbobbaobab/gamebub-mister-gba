@@ -17,6 +17,8 @@ class VideoV0(
   val colorDepthB: Int,
   /// Target frame period, in seconds.
   val framePeriod: Double,
+  /// Center a 3:2 picture in the dock's 480p output for a 16:9 TV.
+  val hdmiPillarbox3To2: Boolean = false,
 ) extends Bundle {
   val data = Output(ColorRGB.apply(colorDepthR, colorDepthG, colorDepthB))
   val dataEnable = Output(Bool())
